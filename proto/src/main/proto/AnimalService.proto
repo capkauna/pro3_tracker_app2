@@ -1,0 +1,55 @@
+syntax = "proto3";
+
+option java_package = "slaughterhouse.assignment.grpc";
+option java_multiple_files = true;
+// NOTE: These options will generate Java classes in the 'slaughterhouse.assignment.grpc' package.
+
+// We need this to handle the LocalDate type correctly.
+// This is a standard Google-provided Protobuf type.
+import "google/type/date.proto";
+
+// --- Service Definition ---
+
+// This service will handle all "Create, Read, Update" (CRUD)
+// operations for Animals.
+service AnimalService {
+
+  // R1: Registers a new animal in the system.
+  // It takes a request and returns the newly created animal's info.
+  rpc AddAnimal(AnimalRegistrationRequest) returns (AnimalInfoResponse);
+
+  // You could add more RPCs here later, for example:
+  // rpc GetAnimalByRegNo(AnimalRegNo) returns (AnimalInfoResponse);
+  // rpc MarkAnimalAsButchered(AnimalId) returns (AnimalInfoResponse);
+}
+
+// --- Message Definitions ---
+
+// This message mirrors your AnimalRegistrationRequestDTO
+message AnimalRegistrationRequest {
+  double weight = 1;
+  string reg_no = 2;
+  string origin = 3;
+  google.type.Date date = 4; // Use google.type.Date for LocalDate
+}
+
+// This message mirrors your AnimalInfoResponseDTO
+message AnimalInfoResponse {
+  int32 animal_id = 1;
+  double weight = 2;
+  string reg_no = 3;
+  google.type.Date registration_date = 4;
+  string origin = 5;
+  bool is_butchered = 6;
+}
+
+// --- Request Messages ---
+
+message AddAnimal {
+  int64 weight = 1;
+  string reg_no= 2;
+}
+
+message MarkAnimalButchered {
+  int32 animal_id = 1;
+}
