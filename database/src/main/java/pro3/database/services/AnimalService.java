@@ -18,83 +18,45 @@ import java.util.Optional;
  * This class acts as the "bridge" between the gRPC/API layer
  * and the database (Repository) layer.
  */
-@Service // This annotation tells Spring to manage this class as a Service
-public class AnimalService
-{
+@Service
+public class AnimalService {
 
-  private final AnimalRepository animalRepository;
+    private final AnimalRepository animalRepository;
 
-  // We use constructor injection - it's a best practice for required dependencies.
-  @Autowired
-  public AnimalService(AnimalRepository animalRepository)
-  {
-    this.animalRepository = animalRepository;
-  }
+    @Autowired
+    public AnimalService(AnimalRepository animalRepository) {
+        this.animalRepository = animalRepository;
+    }
 
-  /**
-   * Registers a new animal in the system.
-   *
-   * @param requestDTO The DTO containing the new animal's data.
-   * @return An DTO with the newly created animal's info, including its generated ID.
-   */
-  @Transactional // Ensures the save operation is atomic (all or nothing)
-  public AnimalInfoResponseDTO createAnimal(
-      AnimalRegistrationRequestDTO requestDTO)
-  {
-    // 1. Use your mapper to convert the DTO to an entity
-    //    (We don't need DTOMapper. here because its methods are static)
-    Animal newAnimal = DTOMapper.animalRegToEntity(requestDTO);
+    @Transactional
+    public AnimalInfoResponseDTO createAnimal(AnimalRegistrationRequestDTO requestDTO) {
+        Animal newAnimal = DTOMapper.animalRegToEntity(requestDTO);
+        Animal savedAnimal = animalRepository.save(newAnimal);
+        return DTOMapper.animalToDTO(savedAnimal);
+    }
 
-    // 2. Use the repository to save the new entity
-    Animal savedAnimal = animalRepository.save(newAnimal);
+    public Optional<AnimalInfoResponseDTO> getAnimalByRegNo(String regNo) {
+        return animalRepository.findByRegNo(regNo)
+                .map(DTOMapper::animalToDTO);
+    }
 
-    // 3. Use your mapper to convert the saved entity back to a response DTO
-    return DTOMapper.animalToDTO(savedAnimal);
-  }
+    public List<AnimalInfoResponseDTO> getAnimalsByOrigin(String origin) {
+        List<Animal> animals = animalRepository.findByOrigin(origin);
+        return DTOMapper.animalToDTOList(animals);
+    }
 
-  /**
-   * Finds a single animal by its registration number.
-   *
-   * @param regNo The registration number to search for.
-   * @return An Optional containing the animal's DTO if found, or empty if not.
-   */
-  public Optional<AnimalInfoResponseDTO> getAnimalByRegNo(String regNo)
-  {
-    // 1. Find the entity
-    Optional<Animal> animalOptional = animalRepository.findByRegNo(regNo);
+    public List<AnimalInfoResponseDTO> getAnimalsByDate(LocalDate date) {
+        List<Animal> animals = animalRepository.findByRegistrationDate(date);
+        return DTOMapper.animalToDTOList(animals);
+    }
 
-    // 2. Map the entity to a DTO (if it exists)
-    return animalOptional.map(DTOMapper::animalToDTO);
-  }
-
-  /**
-   * Finds all animals from a specific origin.
-   *
-   * @param origin The origin to search for.
-   * @return A list of animal DTOs.
-   */
-  public List<AnimalInfoResponseDTO> getAnimalsByOrigin(String origin)
-  {
-    List<Animal> animals = animalRepository.findByOrigin(origin);
-    return DTOMapper.animalToDTOList(animals);
-  }
-
-  /**
-   * Finds all animals registered on a specific date.
-   *
-   * @param date The date to search for.
-   * @return A list of animal DTOs.
-   */
-  public List<AnimalInfoResponseDTO> getAnimalsByDate(LocalDate date)
-  {
-    List<Animal> animals = animalRepository.findByRegistrationDate(date);
-    return DTOMapper.animalToDTOList(animals);
-  }
-
-  public AnimalInfoResponseDTO markAnimalAsButchered(int animalId) {
-    Animal animaltoUpdate = animalRepository.findById(animalId).get();
-    animaltoUpdate.setButchered(true);
-    animalRepository.save(animaltoUpdate);
-    return DTOMapper.animalToDTO(animaltoUpdate);
-  }
+    @Transactional
+    public Optional<AnimalInfoResponseDTO> markAnimalAsButchered(int animalId) {
+        return animalRepository.findById(animalId)
+                .map(animal -> {
+                    animal.setButchered(true);
+                    Animal updated = animalRepository.save(animal);
+                    return DTOMapper.animalToDTO(updated);
+                });
+    }
 }
