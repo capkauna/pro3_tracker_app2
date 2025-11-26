@@ -3,7 +3,7 @@ package pro3.database.repository;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import pro3.database.entities.Part;
-import pro3.database.entities.PartType;
+import pro3.shared_dtos.dtos.extra.PartType;
 
 import java.util.List;
 

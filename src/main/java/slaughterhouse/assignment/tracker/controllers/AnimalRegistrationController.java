@@ -17,9 +17,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-
 @RestController
-@RequestMapping("/api/animals") // Base path for all methods in this controller
+@RequestMapping("/api/animals")
 public class AnimalRegistrationController {
 
   private final ReceptionService receptionService;
@@ -30,65 +29,61 @@ public class AnimalRegistrationController {
   }
 
   @PostMapping
-  public ResponseEntity<AnimalInfoResponseDTO> registerAnimal(@Valid @RequestBody AnimalRegistrationRequestDTO request) {
-    // The @Valid annotation automatically checks the DTO (e.g., @Positive, @NotBlank)
+  public ResponseEntity<AnimalInfoResponseDTO> registerAnimal(
+      @Valid @RequestBody AnimalRegistrationRequestDTO request) {
 
-    // The service does the work and returns the response DTO
     AnimalInfoResponseDTO registeredAnimal = receptionService.registerAnimal(request);
-
-    // Return 201 Created status with the new DTO in the body
     return new ResponseEntity<>(registeredAnimal, HttpStatus.CREATED);
   }
 
-
-  @GetMapping("/{id}")
-  public ResponseEntity<AnimalInfoResponseDTO> getAnimalById(@PathVariable int id) {
-    AnimalInfoResponseDTO animal = receptionService.findAnimalById(id);
+  /**
+   * Get a single animal by its registration number.
+   * Example: GET /api/animals/ABC123
+   */
+  @GetMapping("/{regNo}")
+  public ResponseEntity<AnimalInfoResponseDTO> getAnimalByRegNo(@PathVariable String regNo) {
+    AnimalInfoResponseDTO animal = receptionService.findAnimalByRegNo(regNo);
 
     if (animal != null) {
-      return ResponseEntity.ok(animal); // 200 OK
+      return ResponseEntity.ok(animal);
     } else {
-      return ResponseEntity.notFound().build(); // 404 Not Found
+      return ResponseEntity.notFound().build();
     }
   }
 
   /**
-   * Gets a list of animals, with optional filtering by date or origin.
-   * Handles GET requests to:
-   * - /api/animals
-   * - /api/animals?date=2025-11-06
-   * - /api/animals?origin=Test Farm
+   * Gets a list of animals filtered by date OR origin.
+   * Supported:
+   * - GET /api/animals?date=2025-11-06
+   * - GET /api/animals?origin=Test Farm
    *
-   * @param date (Optional) The registration date to filter by.
-   * @param origin (Optional) The origin farm to filter by.
-   * @return A list of animals matching the filter (200 OK).
+   * If both parameters are missing, returns 400 Bad Request.
    */
   @GetMapping
   public ResponseEntity<List<AnimalInfoResponseDTO>> getAnimals(
-      @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
+      @RequestParam(required = false)
+      @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+      LocalDate date,
       @RequestParam(required = false) String origin) {
+
+    if (date == null && origin == null) {
+      // Assignment only requires date/origin filters, not "get all animals"
+      return ResponseEntity.badRequest().build();
+    }
 
     List<AnimalInfoResponseDTO> animals;
 
     if (date != null) {
-      // Find by date
       animals = receptionService.findAnimalsByDate(date);
-    } else if (origin != null) {
-      // Find by origin
-      animals = receptionService.findAnimalsByOrigin(origin);
     } else {
-      // Get all
-      animals = receptionService.showAnimals();
+      animals = receptionService.findAnimalsByOrigin(origin);
     }
 
-    return ResponseEntity.ok(animals); // 200 OK
+    return ResponseEntity.ok(animals);
   }
 
-  /**
-   * Exception handler for validation errors from @Valid.
-   * This catches the MethodArgumentNotValidException and converts it into a
-   * clean JSON error message with a 400 Bad Request status.
-   */
+  // ------------------- Exception handlers -------------------
+
   @ResponseStatus(HttpStatus.BAD_REQUEST)
   @ExceptionHandler(MethodArgumentNotValidException.class)
   public Map<String, List<String>> handleValidationExceptions(MethodArgumentNotValidException ex) {
@@ -97,17 +92,13 @@ public class AnimalRegistrationController {
     List<String> errorMessages = ex.getBindingResult()
         .getFieldErrors()
         .stream()
-        .map(error -> error.getField() + ": " + error.getDefaultMessage()) // e.g., "weight: Weight must be a positive number"
+        .map(error -> error.getField() + ": " + error.getDefaultMessage())
         .collect(Collectors.toList());
 
     errors.put("errors", errorMessages);
     return errors;
   }
 
-  /**
-   * Exception handler for duplicate registration numbers.
-   * Catches the specific error from the service and returns a 409 Conflict.
-   */
   @ResponseStatus(HttpStatus.CONFLICT)
   @ExceptionHandler(IllegalArgumentException.class)
   public Map<String, String> handleIllegalArgumentException(IllegalArgumentException ex) {
@@ -116,4 +107,3 @@ public class AnimalRegistrationController {
     return error;
   }
 }
-

@@ -1,4 +1,4 @@
-package pro3.shared_dtos.dtos;
+package pro3.shared_dtos.dtos.Animal;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;

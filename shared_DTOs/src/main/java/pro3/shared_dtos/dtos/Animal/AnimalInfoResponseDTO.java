@@ -1,4 +1,4 @@
-package pro3.shared_dtos.dtos;
+package pro3.shared_dtos.dtos.Animal;
 
 import java.time.LocalDate;
 

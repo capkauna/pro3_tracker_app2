@@ -6,8 +6,8 @@ import org.springframework.transaction.annotation.Transactional;
 import pro3.database.entities.Animal;
 import pro3.database.mappers.DTOMapper;
 import pro3.database.repository.AnimalRepository;
-import pro3.shared_dtos.dtos.AnimalInfoResponseDTO;
-import pro3.shared_dtos.dtos.AnimalRegistrationRequestDTO;
+import pro3.shared_dtos.dtos.Animal.AnimalInfoResponseDTO;
+import pro3.shared_dtos.dtos.Animal.AnimalRegistrationRequestDTO;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -49,6 +49,11 @@ public class AnimalService {
         List<Animal> animals = animalRepository.findByRegistrationDate(date);
         return DTOMapper.animalToDTOList(animals);
     }
+
+  public AnimalInfoResponseDTO getAnimalById(int id)
+  {
+    return DTOMapper.animalToDTO(animalRepository.findById(id).orElse(null));
+  }
 
     @Transactional
     public Optional<AnimalInfoResponseDTO> markAnimalAsButchered(int animalId) {

@@ -3,8 +3,6 @@ syntax = "proto3";
 option java_package = "slaughterhouse.assignment.grpc";
 option java_multiple_files = true;
 
-// We need this to handle the LocalDate type correctly.
-import "google/type/date.proto";
 
 // --- Service Definition ---
 //
@@ -34,7 +32,7 @@ message AnimalRegistrationRequest {
   double weight = 1;
   string reg_no = 2;
   string origin = 3;
-  google.type.Date date = 4;
+  string date = 4;
 }
 
 // Mirrors AnimalInfoResponseDTO
@@ -42,7 +40,7 @@ message AnimalInfoResponse {
   int32 animal_id = 1;
   double weight = 2;
   string reg_no = 3;
-  google.type.Date registration_date = 4;
+  string registration_date = 4;
   string origin = 5;
   bool is_butchered = 6;
 }
@@ -66,7 +64,7 @@ message GetAnimalsByOriginRequest {
 
 // Request for GetAnimalsByDate
 message GetAnimalsByDateRequest {
-  google.type.Date date = 1;
+  string date = 1;
 }
 
 // Request for MarkAnimalAsButchered

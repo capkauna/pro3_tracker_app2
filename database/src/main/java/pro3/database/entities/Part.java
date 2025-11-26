@@ -1,6 +1,7 @@
 package pro3.database.entities;
 
 import jakarta.persistence.*;
+import pro3.shared_dtos.dtos.extra.PartType;
 
 @Entity
 public class Part

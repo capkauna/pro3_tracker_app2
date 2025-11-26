@@ -1,4 +1,4 @@
-package pro3.database.entities;
+package pro3.shared_dtos.dtos.extra;
 
 public enum PartType
 {

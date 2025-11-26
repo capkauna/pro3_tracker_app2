@@ -8,7 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import pro3.database.services.AnimalService; // <-- Using your new service!
 
 // Import the generated classes from your .proto file
-import pro3.shared_dtos.dtos.AnimalInfoResponseDTO;
+import pro3.shared_dtos.dtos.Animal.AnimalInfoResponseDTO;
 import slaughterhouse.assignment.grpc.*;
 
 import java.util.Optional;

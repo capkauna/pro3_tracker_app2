@@ -1,7 +1,7 @@
 package pro3.database.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import pro3.database.entities.PartType;
+import pro3.shared_dtos.dtos.extra.PartType;
 import pro3.database.entities.Tray;
 
 import java.util.List;

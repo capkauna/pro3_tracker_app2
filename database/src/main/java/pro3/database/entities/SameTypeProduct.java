@@ -4,6 +4,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.Transient;
+import pro3.shared_dtos.dtos.extra.PartType;
 
 import java.util.ArrayList;
 import java.util.List;
