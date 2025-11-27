@@ -21,6 +21,8 @@ public class HalfAnimalProduct extends Product
     this.parts = new ArrayList<>();
   }
 
+
+
   public void addPart(Part part)
   {
     if (!isPartTypeUnique(part))

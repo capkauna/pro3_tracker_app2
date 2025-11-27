@@ -88,6 +88,13 @@ public class DTOMapper {
     );
   }
 
+  public static List<PartInfoResponseDTO> partToDTOList(List<Part> parts)
+  {
+    return parts.stream()
+        .map(DTOMapper::partToDTO)
+        .collect(Collectors.toList());
+  }
+
 
   // -------------------------------------------------
   // TRAY MAPPING
@@ -124,5 +131,11 @@ public class DTOMapper {
         request.getType(),
         request.getMaxWeightCapacity()
     );
+
+    // -------------------------------------------------
+    // PRODUCT MAPPING
+    // -------------------------------------------------
+
+
   }
 }
