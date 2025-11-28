@@ -5,7 +5,8 @@ import io.grpc.StatusRuntimeException;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import pro3.service_tier.events.AnimalArrivedEvent;
-import pro3.shared_dtos.dtos.Animal.AnimalInfoResponseDTO;
+
+import pro3.shared_DTOs.dtos.Animal.AnimalInfoResponseDTO;
 import pro3.shared_dtos.dtos.Animal.AnimalRegistrationRequestDTO;
 import slaughterhouse.assignment.grpc.AnimalInfoResponse;
 import slaughterhouse.assignment.grpc.AnimalListResponse;
