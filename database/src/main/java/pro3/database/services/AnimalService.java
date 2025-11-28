@@ -28,40 +28,62 @@ public class AnimalService {
         this.animalRepository = animalRepository;
     }
 
+    /**
+     * Registers a new animal in the system.
+     *
+     * @param requestDTO DTO containing the new animal's data.
+     * @return DTO with the newly created animal's info, including its generated ID.
+     */
     @Transactional
     public AnimalInfoResponseDTO createAnimal(AnimalRegistrationRequestDTO requestDTO) {
+        // Map DTO -> entity
         Animal newAnimal = DTOMapper.animalRegToEntity(requestDTO);
-        Animal savedAnimal = animalRepository.save(newAnimal);
-        return DTOMapper.animalToDTO(savedAnimal);
+
+        // Persist
+        Animal saved = animalRepository.save(newAnimal);
+
+        // Map entity -> DTO
+        return DTOMapper.animalToDTO(saved);
     }
 
+    /**
+     * Find a single animal by its registration number.
+     */
     public Optional<AnimalInfoResponseDTO> getAnimalByRegNo(String regNo) {
         return animalRepository.findByRegNo(regNo)
                 .map(DTOMapper::animalToDTO);
     }
 
+    /**
+     * Find all animals from a specific origin.
+     */
     public List<AnimalInfoResponseDTO> getAnimalsByOrigin(String origin) {
-        List<Animal> animals = animalRepository.findByOrigin(origin);
-        return DTOMapper.animalToDTOList(animals);
+        return DTOMapper.animalToDTOList(
+                animalRepository.findByOrigin(origin)
+        );
     }
 
+    /**
+     * Find all animals registered on a specific date.
+     */
     public List<AnimalInfoResponseDTO> getAnimalsByDate(LocalDate date) {
-        List<Animal> animals = animalRepository.findByRegistrationDate(date);
-        return DTOMapper.animalToDTOList(animals);
+        return DTOMapper.animalToDTOList(
+                animalRepository.findByRegistrationDate(date)
+        );
     }
 
-  public AnimalInfoResponseDTO getAnimalById(int id)
-  {
-    return DTOMapper.animalToDTO(animalRepository.findById(id).orElse(null));
-  }
-
+    /**
+     * Mark an animal as butchered.
+     *
+     * @return Optional containing the updated DTO if the animal exists, otherwise Optional.empty().
+     */
     @Transactional
     public Optional<AnimalInfoResponseDTO> markAnimalAsButchered(int animalId) {
         return animalRepository.findById(animalId)
                 .map(animal -> {
                     animal.setButchered(true);
-                    Animal updated = animalRepository.save(animal);
-                    return DTOMapper.animalToDTO(updated);
+                    Animal saved = animalRepository.save(animal);
+                    return DTOMapper.animalToDTO(saved);
                 });
     }
 }
