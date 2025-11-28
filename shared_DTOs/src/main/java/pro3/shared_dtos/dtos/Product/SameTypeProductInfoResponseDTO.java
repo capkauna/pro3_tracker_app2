@@ -11,7 +11,11 @@ public class SameTypeProductInfoResponseDTO extends ProductInfoResponseDTO
   private PartType type;
   private List<PartInfoResponseDTO> parts;
 
-  // Getters and setters
+    public SameTypeProductInfoResponseDTO(int id, PartType type, List<PartInfoResponseDTO> partDTOs) {
+        super();
+    }
+
+    // Getters and setters
 
   public PartType getType()
   {

@@ -9,7 +9,11 @@ public class HalfAnimalProductInfoResponseDTO extends ProductInfoResponseDTO
 {
   private List<PartInfoResponseDTO> parts;
 
-  // --- Getters and Setters ---
+    public HalfAnimalProductInfoResponseDTO(int id, List<PartInfoResponseDTO> partDTOs) {
+        super();
+    }
+
+    // --- Getters and Setters ---
 
   public List<PartInfoResponseDTO> getParts() {
     return parts;

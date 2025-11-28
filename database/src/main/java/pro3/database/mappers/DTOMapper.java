@@ -1,12 +1,14 @@
 package pro3.database.mappers;
 
-import pro3.database.entities.Animal;
-import pro3.database.entities.Part;
-import pro3.database.entities.Tray;
+import pro3.database.entities.*;
+import pro3.shared_dtos.dtos.Product.HalfAnimalProductInfoResponseDTO;
+import pro3.shared_dtos.dtos.Product.ProductInfoResponseDTO;
 import pro3.shared_dtos.dtos.Animal.AnimalInfoResponseDTO;
 import pro3.shared_dtos.dtos.Animal.AnimalRegistrationRequestDTO;
 import pro3.shared_dtos.dtos.Part.PartCreationRequestDTO;
 import pro3.shared_dtos.dtos.Part.PartInfoResponseDTO;
+import pro3.shared_dtos.dtos.Product.ProductInfoResponseDTO;
+import pro3.shared_dtos.dtos.Product.SameTypeProductInfoResponseDTO;
 import pro3.shared_dtos.dtos.Tray.TrayCreationRequestDTO;
 import pro3.shared_dtos.dtos.Tray.TrayInfoResponseDTO;
 
@@ -122,20 +124,69 @@ public class DTOMapper {
   }
 
   public static Tray trayCreationToEntity(TrayCreationRequestDTO request) {
-    if (request == null) {
-      return null;
-    }
+      if (request == null) {
+          return null;
+      }
 
-    // Tray constructor: Tray(PartType type, double maxWeightCapacity)
-    return new Tray(
-        request.getType(),
-        request.getMaxWeightCapacity()
-    );
+      // Tray constructor: Tray(PartType type, double maxWeightCapacity)
+      return new Tray(
+              request.getType(),
+              request.getMaxWeightCapacity()
+      );
+  }
 
     // -------------------------------------------------
     // PRODUCT MAPPING
     // -------------------------------------------------
 
+public static ProductInfoResponseDTO productToDTO (Product product) throws InvalidObjectException {
+          if (product == null) {
+              return null;
+          }
 
+          // Map nested parts (if the service has populated them)
+          List<PartInfoResponseDTO> partDTOs = null;
+          if (product instanceof SameTypeProduct) {
+              SameTypeProduct sameTypeProduct = (SameTypeProduct) product;
+              partDTOs = partToDTOList(sameTypeProduct.getParts());
+
+              return new SameTypeProductInfoResponseDTO(
+                      sameTypeProduct.getId(),
+                      sameTypeProduct.getType(),
+                      partDTOs
+              );
+          } else if (product instanceof HalfAnimalProduct) {
+              HalfAnimalProduct halfAnimalProduct = (HalfAnimalProduct) product;
+              partDTOs = partToDTOList(halfAnimalProduct.getParts());
+
+              return new HalfAnimalProductInfoResponseDTO(
+                      halfAnimalProduct.getId(),
+                      partDTOs
+              );
+          } else {
+              // Unknown subclass – if you ever add more, handle them here.
+              throw new InvalidObjectException(
+                      "Unknown Product subclass: " + product.getClass().getName()
+              );
+          }
+      }
+
+      public static List<ProductInfoResponseDTO> productToDTOList(List<Product> products)
+      throws InvalidObjectException {
+
+          return products.stream()
+                  .map(product -> {
+                      try {
+                          return productToDTO(product);
+                      } catch (InvalidObjectException e) {
+                          // Wrap checked exception into a runtime one for use in streams
+                          throw new RuntimeException(e);
+                      }
+                  })
+                  .collect(Collectors.toList());
+      }
   }
-}
+
+
+
+

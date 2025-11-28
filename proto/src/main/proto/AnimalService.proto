@@ -3,35 +3,34 @@ syntax = "proto3";
 option java_package = "slaughterhouse.assignment.grpc";
 option java_multiple_files = true;
 
+// -------------------- SERVICE --------------------
 
-// --- Service Definition ---
-//
-// This service handles CRUD-like operations for Animals.
 service AnimalService {
 
   // R1: Registers a new animal in the system.
   rpc AddAnimal(AnimalRegistrationRequest) returns (AnimalInfoResponse);
 
-  // R2: Get a single animal by its registration number.
+  // R2: Get single animal by registration number
   rpc GetAnimalByRegNo(GetAnimalByRegNoRequest) returns (AnimalInfoResponse);
 
-  // R3: Get all animals from a given origin.
+  // R3: Get animals by origin
   rpc GetAnimalsByOrigin(GetAnimalsByOriginRequest) returns (AnimalListResponse);
 
-  // R4: Get all animals registered on a given date.
+  // R4: Get animals by registration date
   rpc GetAnimalsByDate(GetAnimalsByDateRequest) returns (AnimalListResponse);
 
-  // R5: Mark an animal as butchered.
+  // R5: Mark animal as butchered
   rpc MarkAnimalAsButchered(MarkAnimalButchered) returns (AnimalInfoResponse);
 }
 
-// --- Message Definitions ---
+// -------------------- MESSAGES --------------------
 
 // Mirrors AnimalRegistrationRequestDTO
 message AnimalRegistrationRequest {
   double weight = 1;
   string reg_no = 2;
   string origin = 3;
+  // ISO-8601 date string: "YYYY-MM-DD"
   string date = 4;
 }
 
@@ -40,44 +39,35 @@ message AnimalInfoResponse {
   int32 animal_id = 1;
   double weight = 2;
   string reg_no = 3;
+  // ISO-8601 date string: "YYYY-MM-DD"
   string registration_date = 4;
   string origin = 5;
   bool is_butchered = 6;
 }
 
-// List of animals, used for queries that return multiple animals.
-message AnimalListResponse {
-  repeated AnimalInfoResponse animals = 1;
-}
+// --- Request wrappers ---
 
-// --- Request Messages ---
-
-// Request for GetAnimalByRegNo
 message GetAnimalByRegNoRequest {
   string reg_no = 1;
 }
 
-// Request for GetAnimalsByOrigin
 message GetAnimalsByOriginRequest {
   string origin = 1;
 }
 
-// Request for GetAnimalsByDate
 message GetAnimalsByDateRequest {
+  // ISO-8601 date string: "YYYY-MM-DD"
   string date = 1;
 }
 
-// Request for MarkAnimalAsButchered
+// --- List wrapper ---
+
+message AnimalListResponse {
+  repeated AnimalInfoResponse animals = 1;
+}
+
+// --- Mark butchered ---
+
 message MarkAnimalButchered {
   int32 animal_id = 1;
 }
-
-// NOTE: This AddAnimal message is not used anymore,
-// you can safely delete it if you want.
-// Keeping it here commented out so it does not break anything.
-/*
-message AddAnimal {
-  int64 weight = 1;
-  string reg_no = 2;
-}
-*/

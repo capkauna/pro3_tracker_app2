@@ -2,15 +2,15 @@ package events;
 
 public class TrayFullEvent
 {
-  private final int trayId;
+    private final int trayId;
 
-  public TrayFullEvent(int trayId)
-  {
-    this.trayId = trayId;
-  }
+    public TrayFullEvent(int trayId)
+    {
+        this.trayId = trayId;
+    }
 
-  public int getTrayId()
-  {
-    return trayId;
-  }
+    public int getTrayId()
+    {
+        return trayId;
+    }
 }
