@@ -98,12 +98,7 @@
             <version>3.1.0.RELEASE</version>
             <scope>compile</scope>
         </dependency>
-        <dependency>
-            <groupId>slaughterhouse.assignment</groupId>
-            <artifactId>tracker</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
-            <scope>compile</scope>
-        </dependency>
+
 
     </dependencies>
 
