@@ -1,4 +1,4 @@
-package services;
+package pro3.service_tier.services;
 
 import io.grpc.stub.StreamObserver;
 import net.devh.boot.grpc.server.service.GrpcService;

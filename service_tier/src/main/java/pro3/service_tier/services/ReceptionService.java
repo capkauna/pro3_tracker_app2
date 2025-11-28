@@ -1,6 +1,6 @@
-package services;
+package pro3.service_tier.services;
 
-import events.AnimalArrivedEvent;
+import pro3.service_tier.events.AnimalArrivedEvent;
 import io.grpc.Status;
 import io.grpc.StatusRuntimeException;
 import org.springframework.context.ApplicationEventPublisher;
