@@ -25,6 +25,7 @@
 //  private PartRepository partRepository;
 //  private TrayRepository trayRepository;
 //  private final ApplicationEventPublisher eventPublisher;
+//  private static final Logger log = LoggerFactory.getLogger(ButcherService.class);
 //
 //  public ButcheringService(AnimalRepository animalRepository,
 //      PartRepository partRepository,
@@ -35,6 +36,15 @@
 //    this.eventPublisher = eventPublisher;
 //  }
 //
+ // // This is the listener that replaces your old Spring @EventListener
+//    // It listens for the "success" message from the database server.
+//    @RabbitListener(queues = "q.animal-registration-success")
+//    public void onAnimalRegistrationSuccess(AnimalInfoResponseDTO newAnimal) {
+//
+//        log.info("BUTCHER SERVICE: Received new animal, ID: " + D.getAnimalid());
+//
+//        //  butchering starting logic
+//    }
 //  @Async
 //  @EventListener
 //  @Transactional

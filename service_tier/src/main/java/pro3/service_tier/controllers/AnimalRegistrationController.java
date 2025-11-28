@@ -26,17 +26,20 @@ public class AnimalRegistrationController {
         this.receptionService = receptionService;
     }
 
-    /**
-     * Register a new animal.
-     * POST /api/animals
-     */
-    @PostMapping
-    public ResponseEntity<AnimalInfoResponseDTO> registerAnimal(
-            @Valid @RequestBody AnimalRegistrationRequestDTO request) {
-
-        AnimalInfoResponseDTO registeredAnimal = receptionService.registerAnimal(request);
-        return new ResponseEntity<>(registeredAnimal, HttpStatus.CREATED);
-    }
+  /**
+   * Register a new animal.
+   * POST /api/animals
+   */
+  @PostMapping
+  //changed to void for rabbitmq
+  public ResponseEntity<Void> registerAnimal(@Valid @RequestBody AnimalRegistrationRequestDTO request)
+  {
+    //DTO registeredAnimal =
+    receptionService.registerAnimal(request);
+    //return new ResponseEntity<>(registeredAnimal, HttpStatus.CREATED);
+    //since we're not sure whether the request will be handled immediately or not, created is not appropriate, so accepted is better
+    return new ResponseEntity<>(HttpStatus.ACCEPTED);
+  }
 
     /**
      * Get a single animal by its registration number.

@@ -6,7 +6,7 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import pro3.service_tier.events.AnimalArrivedEvent;
 
-import pro3.shared_DTOs.dtos.Animal.AnimalInfoResponseDTO;
+import pro3.shared_dtos.dtos.Animal.AnimalInfoResponseDTO;
 import pro3.shared_dtos.dtos.Animal.AnimalRegistrationRequestDTO;
 import slaughterhouse.assignment.grpc.AnimalInfoResponse;
 import slaughterhouse.assignment.grpc.AnimalListResponse;
@@ -16,27 +16,43 @@ import slaughterhouse.assignment.grpc.GetAnimalByRegNoRequest;
 import slaughterhouse.assignment.grpc.GetAnimalsByDateRequest;
 import slaughterhouse.assignment.grpc.GetAnimalsByOriginRequest;
 
+//rabbits
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
+
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
 @Service
 public class ReceptionService {
+    //bunny helper
+    private final RabbitTemplate rabbitTemplate;
 
     private final AnimalServiceGrpc.AnimalServiceBlockingStub animalStub;
     private final ApplicationEventPublisher eventPublisher;
 
-    public ReceptionService(AnimalServiceGrpc.AnimalServiceBlockingStub animalStub,
+    public ReceptionService(RabbitTemplate rabbitTemplate,AnimalServiceGrpc.AnimalServiceBlockingStub animalStub,
                             ApplicationEventPublisher eventPublisher) {
         this.animalStub = animalStub;
         this.eventPublisher = eventPublisher;
+        this.rabbitTemplate = rabbitTemplate;
     }
 
     // ----------------------------------------------------
     // Register animal (uses gRPC AddAnimal)
     // ----------------------------------------------------
-    public AnimalInfoResponseDTO registerAnimal(AnimalRegistrationRequestDTO request) {
+    public void registerAnimal(AnimalRegistrationRequestDTO request) {
         try {
+            //bunny business
+            String routingKey = "animal.registration.key";
+            String exchange = "slaughterhouse.exchange";
+
+            //sends the dto object as a json message to rabbitmq
+            //no longer block or wait for response
+            rabbitTemplate.convertAndSend(exchange, routingKey, request);
+
+            //grpc stuff no longer needed for this, and the method returns void now
+          /*
             AnimalRegistrationRequest grpcRequest = dtoToGrpcRequest(request);
 
             AnimalInfoResponse grpcResponse = animalStub.addAnimal(grpcRequest);
@@ -46,6 +62,8 @@ public class ReceptionService {
             eventPublisher.publishEvent(event);
 
             return grpcToDto(grpcResponse);
+
+           */
         } catch (StatusRuntimeException e) {
             if (e.getStatus().getCode() == Status.ALREADY_EXISTS.getCode()
                     || e.getStatus().getCode() == Status.INVALID_ARGUMENT.getCode()) {
@@ -58,6 +76,7 @@ public class ReceptionService {
     // ----------------------------------------------------
     // Get single animal by REGISTRATION NUMBER
     // ----------------------------------------------------
+  //read operations still use grpc, so now we have sending via rabbit horde and receiving via grpc
     public AnimalInfoResponseDTO findAnimalByRegNo(String regNo) {
         try {
             GetAnimalByRegNoRequest request =
