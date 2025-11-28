@@ -1,4 +1,4 @@
-package controllers;
+package pro3.service_tier.controllers;
 
 import jakarta.validation.Valid;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -6,7 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
-import services.ReceptionService;
+import pro3.service_tier.services.ReceptionService;
 import pro3.shared_dtos.dtos.Animal.AnimalInfoResponseDTO;
 import pro3.shared_dtos.dtos.Animal.AnimalRegistrationRequestDTO;
 

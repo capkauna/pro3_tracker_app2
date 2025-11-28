@@ -1,4 +1,4 @@
-package config;
+package pro3.service_tier.config;
 
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;

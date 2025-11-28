@@ -1,4 +1,4 @@
-package events;
+package pro3.service_tier.events;
 
 public class AnimalArrivedEvent
 {
